@@ -991,15 +991,15 @@ export default function App() {
             <h1 className="text-lg sm:text-xl font-black text-slate-800 tracking-tight ml-2">
               {activeTab === "announcements" && "หลักข่าวสารประชาสัมพันธ์"}
               {activeTab === "dashboard" && "ข้อมูลสรุปยอดพัสดุและคลัง"}
-              {activeTab === "requisition" && "ยื่นใบเบิกวัสดุอุปการณ์แพทย์"}
-              {activeTab === "approval" && "กล่องพิจารณาจ่ายพัสดุเวชภัณฑ์แพทย์"}
+              {activeTab === "requisition" && "ยื่นใบเบิกวัสดุ"}
+              {activeTab === "approval" && "กล่องพิจารณาจ่ายวัสดุ"}
               {activeTab === "batchApproval" && "อนุมัติสรุปเป็นชุดประมวลผล"}
-              {activeTab === "history" && "บันทึกข้อมูลใบเบิกแพทย์ประวัติศาสตร์"}
-              {activeTab === "stock" && "จัดการคลังแคตตาล็อกวัสดุและยา"}
+              {activeTab === "history" && "ประวัติใบเบิก"}
+              {activeTab === "stock" && "จัดการคลังแคตตาล็อก"}
               {activeTab === "goodsReceipt" && "นำเข้าอุปกรณ์และรับสต๊อกสินค้า"}
-              {activeTab === "reports" && "สรุปวิเคราะห์ข้อมูลเพื่อส่งออก"}
-              {activeTab === "adminUsers" && "จัดการทะเบียนเอกลักษณ์บุคลากร"}
-              {activeTab === "profile" && "ข้อมูลผู้ใช้บันทึกบัตร"}
+              {activeTab === "reports" && "สรุปวิเคราะห์ข้อมูล"}
+              {activeTab === "adminUsers" && "จัดการสิทธิ์ผู้ใช้"}
+              {activeTab === "profile" && "ข้อมูลผู้ใช้"}
             </h1>
           </div>
 

@@ -1,0 +1,8 @@
+{
+  "name": "Remix: THAMC e-Material",
+  "description": "ระบบเบิกจ่ายพลัสดุและพัสดุคงคลัง THAMC e-Material",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

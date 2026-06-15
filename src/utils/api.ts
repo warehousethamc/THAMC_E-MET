@@ -12,7 +12,7 @@ export function resolveApiUrl(path: string): string {
      window.location.hostname !== "127.0.0.1" && 
      !window.location.hostname.includes("run.app"))
   ) {
-    apiBase = localStorage.getItem("backend_api_url") || "https://ais-dev-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
+    apiBase = localStorage.getItem("backend_api_url") || "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
   }
   
   const cleanPath = path.startsWith("/") ? path : `/${path}`;

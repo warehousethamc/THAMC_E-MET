@@ -552,7 +552,7 @@ export default function App() {
           <div className="text-center shrink-0 mb-4">
             <button
               onClick={() => {
-                const currentApi = localStorage.getItem("backend_api_url") || "https://ais-dev-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
+                const currentApi = localStorage.getItem("backend_api_url") || "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
                 Swal.fire({
                   title: "⚙️ ตั้งค่า API เซิร์ฟเวอร์",
                   html: `

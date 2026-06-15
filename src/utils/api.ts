@@ -1,6 +1,27 @@
+export function resolveApiUrl(path: string): string {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  
+  let apiBase = "";
+  // Detect if hosted on GitHub Pages or independent static sites
+  if (
+    window.location.hostname.endsWith(".github.io") || 
+    (window.location.hostname !== "localhost" && 
+     window.location.hostname !== "127.0.0.1" && 
+     !window.location.hostname.includes("run.app"))
+  ) {
+    apiBase = "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
+  }
+  
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${apiBase}${cleanPath}`;
+}
+
 export async function runScript(method: string, ...args: any[]): Promise<any> {
   try {
-    const response = await fetch("/api/rpc", {
+    const response = await fetch(resolveApiUrl("/api/rpc"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

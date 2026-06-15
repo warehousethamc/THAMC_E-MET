@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { runScript, formatDateForDisplay, formatDateTimeForDisplay, formatNumber } from "./utils/api";
+import { runScript, formatDateForDisplay, formatDateTimeForDisplay, formatNumber, resolveApiUrl } from "./utils/api";
 import { User, Requisition, RequisitionItem } from "./types";
 
 // Import Custom Tab Components
@@ -1413,7 +1413,7 @@ export default function App() {
                     </span>
                     {currentReqDetail.requisition.RequisitionPDFLink ? (
                       <a
-                        href={currentReqDetail.requisition.RequisitionPDFLink}
+                        href={resolveApiUrl(currentReqDetail.requisition.RequisitionPDFLink)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center text-xs font-bold bg-white text-indigo-650 hover:bg-slate-50 border border-slate-250 px-3 py-1.5 rounded-lg shadow-sm"
@@ -1428,7 +1428,7 @@ export default function App() {
                     {(currentReqDetail.requisition.GoodsIssuePDFLinks || []).map((gi) => (
                       <a
                         key={gi.id}
-                        href={gi.url}
+                        href={resolveApiUrl(gi.url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center text-xs font-bold bg-white text-emerald-700 hover:bg-slate-50 border border-slate-250 px-3 py-1.5 rounded-lg shadow-sm animate-scale-up"

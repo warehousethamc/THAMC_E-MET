@@ -26,6 +26,8 @@ export default function ReportsTab({ currentUser, departments }: ReportsTabProps
   const [reportStartDate, setReportStartDate] = useState("");
   const [reportEndDate, setReportEndDate] = useState("");
   const [reportSingleDate, setReportSingleDate] = useState("");
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("23:59");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
 
@@ -68,22 +70,21 @@ export default function ReportsTab({ currentUser, departments }: ReportsTabProps
       filters.department = reportDepartment;
     }
 
-    if (reportType === "dailyRequisition") {
-      filters.reportDate = reportSingleDate;
-      if (!filters.reportDate) {
-        Swal.fire("ข้อผิดพลาด", "ระบบประสงค์ระบุวันที่ออกใบเบิกพัสดุรายวัน", "warning");
-        setLoading(false);
-        return;
-      }
-      rpcMethod = "getDailyRequisitionReport";
-    } else if (reportType === "inventoryStock") {
+    if (reportType === "inventoryStock") {
       filters.category = categoryFilter.trim();
       filters.location = locationFilter.trim();
       rpcMethod = "getInventoryStockReport";
     } else {
       filters.startDate = reportStartDate;
       filters.endDate = reportEndDate;
-      if (reportType === "approvedIssued") rpcMethod = "getApprovedIssuedReport";
+      filters.startTime = startTime;
+      filters.endTime = endTime;
+
+      if (reportType === "dailyRequisition") {
+        filters.reportDate = reportSingleDate; // Left for backward compatibility if ever queried with it
+        rpcMethod = "getDailyRequisitionReport";
+      }
+      else if (reportType === "approvedIssued") rpcMethod = "getApprovedIssuedReport";
       else if (reportType === "cancelledRejected") rpcMethod = "getCancelledRejectedReport";
       else if (reportType === "potentialOverStock") rpcMethod = "getPotentialOverStockReport";
       else if (reportType === "backorderedItems") rpcMethod = "getBackorderedItemsReport";
@@ -316,25 +317,126 @@ export default function ReportsTab({ currentUser, departments }: ReportsTabProps
               </div>
             )}
 
-            {/* Date logic */}
-            {reportType === "dailyRequisition" ? (
-              <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                  เลือกวันรายงานสรุป
-                </label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+            {/* Date-time options for all date-based report types */}
+            {reportType !== "inventoryStock" && reportType !== "" ? (
+              <>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    จากวันที่
+                  </label>
                   <input
                     type="date"
                     required
-                    className="w-full pl-10 pr-3 py-1.5 bg-white border border-slate-355 rounded-lg text-slate-700 text-sm focus:outline-none"
-                    value={reportSingleDate}
-                    onChange={(e) => setReportSingleDate(e.target.value)}
+                    className="w-full bg-white border border-slate-355 focus:ring-2 focus:ring-indigo-500 rounded-lg px-3 py-1.5 text-slate-700 text-sm focus:outline-none"
+                    value={reportStartDate}
+                    onChange={(e) => {
+                      setReportStartDate(e.target.value);
+                      setReportSingleDate(e.target.value); // Sync single date for backward compatibility
+                    }}
                   />
                 </div>
-              </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    ถึงวันที่
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    className="w-full bg-white border border-slate-355 focus:ring-2 focus:ring-indigo-500 rounded-lg px-3 py-1.5 text-slate-700 text-sm focus:outline-none"
+                    value={reportEndDate}
+                    onChange={(e) => setReportEndDate(e.target.value)}
+                  />
+                </div>
+
+                {/* Processing Time Filter Sub-panel spanning full row */}
+                <div className="md:col-span-2 lg:col-span-4 mt-2">
+                  <div className="border-t border-indigo-100/60 pt-4">
+                    <label className="block text-xs font-black text-indigo-900 uppercase tracking-wider mb-2">
+                      ⏰ ตัวเลือกกรองช่วงเวลาในวัน (Time Range Filters)
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                      {/* Presets Row */}
+                      <div className="sm:col-span-2">
+                        <span className="block text-[11px] font-bold text-slate-400 uppercase mb-1">
+                          เลือกกำหนดเวลากดด่วน (Time Presets)
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStartTime("00:00");
+                              setEndTime("23:59");
+                            }}
+                            className={`px-3 py-1 text-xs rounded-full border transition-all font-bold ${
+                              startTime === "00:00" && endTime === "23:59"
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                            }`}
+                          >
+                            ☀️ ทั้งวัน (00:00 - 23:59)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStartTime("00:00");
+                              setEndTime("12:00");
+                            }}
+                            className={`px-3 py-1 text-xs rounded-full border transition-all font-bold ${
+                              startTime === "00:00" && endTime === "12:00"
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                            }`}
+                          >
+                            🕛 ถึง เที่ยงวัน (00:00 - 12:00)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setStartTime("12:00");
+                              setEndTime("23:59");
+                            }}
+                            className={`px-3 py-1 text-xs rounded-full border transition-all font-bold ${
+                              startTime === "12:00" && endTime === "23:59"
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                            }`}
+                          >
+                            🌙 หลังเที่ยง - เที่ยงคืน (12:00 - 23:59)
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Custom Times */}
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">
+                          กรอง ตั้งแต่เวลา
+                        </label>
+                        <input
+                          type="time"
+                          required
+                          className="w-full bg-white border border-slate-355 focus:ring-2 focus:ring-indigo-500 rounded-lg px-3 py-1.5 text-slate-700 text-sm focus:outline-none focus:border-indigo-500"
+                          value={startTime}
+                          onChange={(e) => setStartTime(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">
+                          กรอง ถึงเวลา
+                        </label>
+                        <input
+                          type="time"
+                          required
+                          className="w-full bg-white border border-slate-355 focus:ring-2 focus:ring-indigo-500 rounded-lg px-3 py-1.5 text-slate-700 text-sm focus:outline-none focus:border-indigo-500"
+                          value={endTime}
+                          onChange={(e) => setEndTime(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
             ) : reportType === "inventoryStock" ? (
-              <div className="grid grid-cols-2 gap-3 col-span-1 md:col-span-2">
+              <div className="grid grid-cols-2 gap-3 col-span-1 md:col-span-2 lg:col-span-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                     กรองตามหมวดหมู่
@@ -360,32 +462,7 @@ export default function ReportsTab({ currentUser, departments }: ReportsTabProps
                   />
                 </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 col-span-1 md:col-span-2">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    จากวันที่
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full bg-white border border-slate-355 focus:ring-2 focus:ring-indigo-500 rounded-lg px-3 py-1.5 text-slate-700 text-sm focus:outline-none"
-                    value={reportStartDate}
-                    onChange={(e) => setReportStartDate(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    ถึงวันที่
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full bg-white border border-slate-355 focus:ring-2 focus:ring-indigo-500 rounded-lg px-3 py-1.5 text-slate-700 text-sm focus:outline-none"
-                    value={reportEndDate}
-                    onChange={(e) => setReportEndDate(e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
+            ) : null}
 
             {/* Generate controls */}
             <div className="lg:col-span-4 flex justify-end space-x-3 mt-2 border-t border-indigo-100/40 pt-4 shrink-0">

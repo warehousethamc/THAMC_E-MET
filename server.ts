@@ -1899,31 +1899,33 @@ async function getDailyRequisitionReport(filters: any) {
   filters = filters || {};
   try {
     const selectedDate = filters.reportDate;
-    if (!selectedDate) throw new Error("No report date selected");
+    const startDate = filters.startDate || selectedDate;
+    const endDate = filters.endDate || selectedDate;
+
+    if (!startDate) throw new Error("No report date or date range specified");
 
     const params: any = {
-      select: "*",
-      date: `eq.${selectedDate}`
+      select: "*"
     };
+    if (selectedDate && !filters.startDate && !filters.endDate) {
+      params.date = `eq.${selectedDate}`;
+    } else {
+      _applyDateFiltersToParams(params, { startDate, endDate });
+    }
+
     if (filters.department && filters.department.trim()) {
       params.requestor_department = `ilike.%${filters.department}%`;
     }
 
     let reqs = await sbSelect("requisitions", "*", params, "created_at.asc");
 
-    if (filters.startTime && filters.endTime) {
-      const sd = new Date(`${selectedDate}T${filters.startTime}:00`);
-      const ed = new Date(`${selectedDate}T${filters.endTime}:59`);
-      reqs = reqs.filter((r: any) => {
-        let timestampStr = r.created_at;
-        if (!timestampStr && r.date) {
-          timestampStr = `${r.date}T00:00:00`;
-        }
-        if (!timestampStr) return false;
-        const d = new Date(timestampStr);
-        return d >= sd && d <= ed;
-      });
-    }
+    // Apply accurate timezone-aware date range and time-interval filtering
+    reqs = _filterReqsByDateTimeRange(reqs, {
+      startDate,
+      endDate,
+      startTime: filters.startTime,
+      endTime: filters.endTime
+    });
 
     const reqIds = reqs.map((r: any) => r.id);
     if (reqIds.length === 0) return [];
@@ -1999,33 +2001,44 @@ function _applyDateFiltersToParams(params: any, filters: any) {
 }
 
 function _filterReqsByDateOnlyRange(reqs: any[], filters: any) {
-  const sd = filters.startDate;
-  const ed = filters.endDate;
-  return reqs.filter((r: any) => {
-    if (!r.date) return false;
-    if (sd && r.date < sd) return false;
-    if (ed && r.date > ed) return false;
-    return true;
-  });
+  return _filterReqsByDateTimeRange(reqs, filters);
 }
 
 function _filterReqsByDateTimeRange(reqs: any[], filters: any) {
-  if (!filters.startDate || !filters.endDate) return reqs;
+  const sd = filters.startDate;
+  const ed = filters.endDate;
+  if (!sd && !ed) return reqs;
 
   const startTimeStr = filters.startTime || "00:00";
   const endTimeStr = filters.endTime || "23:59";
 
-  const sd = new Date(`${filters.startDate}T${startTimeStr}:00`);
-  const ed = new Date(`${filters.endDate}T${endTimeStr}:59`);
+  const startTarget = `${sd || "1970-01-01"} ${startTimeStr}:00`;
+  const endTarget = `${ed || "9999-12-31"} ${endTimeStr}:59`;
 
   return reqs.filter((r: any) => {
-    let timestampStr = r.created_at;
-    if (!timestampStr && r.date) {
-      timestampStr = `${r.date}T00:00:00`;
+    let timestampStr = r.created_at || r.createdAt;
+    if (timestampStr) {
+      try {
+        const ictStr = new Date(timestampStr).toLocaleString("sv-SE", { timeZone: "Asia/Bangkok" });
+        const ictDateOnly = ictStr.split(" ")[0];
+        const ictTimeOnly = ictStr.split(" ")[1].substring(0, 5);
+
+        if (sd && ictDateOnly < sd) return false;
+        if (ed && ictDateOnly > ed) return false;
+
+        if (sd && ictDateOnly === sd && ictTimeOnly < startTimeStr) return false;
+        if (ed && ictDateOnly === ed && ictTimeOnly > endTimeStr) return false;
+
+        return true;
+      } catch (err) {
+        // Fallback to simple date only comparison on error
+      }
     }
-    if (!timestampStr) return false;
-    const d = new Date(timestampStr);
-    return d >= sd && d <= ed;
+
+    if (!r.date) return false;
+    if (sd && r.date < sd) return false;
+    if (ed && r.date > ed) return false;
+    return true;
   });
 }
 

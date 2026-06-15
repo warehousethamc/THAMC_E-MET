@@ -403,7 +403,7 @@ export default function App() {
               <ShoppingCart className="w-7 h-7" />
             </div>
             <h1 className="text-2xl font-black text-slate-800 tracking-tight">THAMC e-Material</h1>
-            <p className="text-slate-400 text-xs mt-1">ระบบบริหารเบิกจ่ายยาและวัสดุอุปกรณ์วิชาการแพทย์ V1.2</p>
+            <p className="text-slate-400 text-xs mt-1">ระบบเบิกจ่ายวัสดุสำนักงาน V1.2</p>
           </div>
 
           {/* Form */}
@@ -429,7 +429,7 @@ export default function App() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    รหัสผ่านรังเกียจ (Password)
+                    รหัสผ่าน (Password)
                   </label>
                   <input
                     type="password"
@@ -444,7 +444,7 @@ export default function App() {
                   type="submit"
                   className="w-full py-2.5 bg-indigo-650 hover:bg-slate-705 text-white bg-indigo-600 hover:bg-indigo-750 font-bold rounded-lg text-sm shadow-md transition-all hover:translate-y-[-1px]"
                 >
-                  เข้าตรวจสอบคลัง
+                  เข้าสู่ระบบ
                 </button>
                 <p className="text-center text-xs text-slate-500 mt-4 leading-relaxed font-normal">
                   ยังไม่เป็นพนักงานในระบบเบิก?{" "}
@@ -456,7 +456,7 @@ export default function App() {
                     }}
                     className="font-bold text-indigo-600 hover:underline inline-block"
                   >
-                    สมัครสิทธิ์เบิกที่นี่
+                    ลงทะเบียนผู้ใช้ใหม่
                   </button>
                 </p>
               </form>
@@ -503,7 +503,7 @@ export default function App() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-505 uppercase tracking-wider mb-1">
-                    แผนกปฏิบัติงานแพทย์สังกัด
+                    แผนกปฏิบัติงาน
                   </label>
                   <select
                     required
@@ -523,7 +523,7 @@ export default function App() {
                   type="submit"
                   className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-sm shadow-md transition-all mt-4"
                 >
-                  สมัครไอดีเบิกพัสดุ
+                  ลงทะเบียน
                 </button>
                 <p className="text-center text-xs text-slate-500 mt-4 leading-relaxed font-normal">
                   มีบัญชีอยู่แล้วในระบบ?{" "}

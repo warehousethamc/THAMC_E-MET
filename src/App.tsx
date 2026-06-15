@@ -1774,7 +1774,7 @@ function BatchApprovalTab() {
       if (res.success) {
         Swal.fire({
           icon: "success",
-          title: "อนุมัติชุดโปรแกรมสำเร็จ!",
+          title: "อนุมัติแบบชุดสำเร็จ!",
           text: `ทำรายงาน ${actionText} ประมวลผลจำนวน ${res.processedCount} ใบเบิกสำเร็จสมบูรณ์`,
           confirmButtonColor: "#059659",
         });

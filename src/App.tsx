@@ -155,7 +155,7 @@ export default function App() {
         Swal.fire({
           icon: "success",
           title: "เข้าสู่ระบบสำเร็จ!",
-          text: `ยินดีต้อนรับคุณ ${user.name} เข้าสู่คลังยาและคลังพัสดุแพทย์`,
+          text: `ยินดีต้อนรับคุณ ${user.name} เข้าสู่ระบบ`,
           toast: true,
           position: "top-end",
           showConfirmButton: false,

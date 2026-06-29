@@ -147,12 +147,12 @@ export default function ProfileTab({ currentUser, departments, onProfileUpdated 
             <div className="mt-8 pt-6 border-t border-slate-100">
               <h3 className="text-md font-bold text-amber-600 mb-4 flex items-center uppercase tracking-wide">
                 <Key className="w-5 h-5 text-amber-500 mr-2" />
-                รีเซ็ตปรับแต่งรหัสผ่านรักษาความปลอดภัย (ทางเลือก)
+                รีเซ็ตปรับแต่งรหัสผ่าน (ทางเลือก)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                    รหัสผ่านรังเกียจชุดใหม่ (ใหม่)
+                    รหัสผ่านใหม่
                   </label>
                   <input
                     type="password"

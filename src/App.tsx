@@ -409,7 +409,7 @@ export default function App() {
           {/* Form */}
           <div className="w-full max-w-sm my-auto py-8">
             <h2 className="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3 mb-6">
-              {authMode === "login" ? "ลงชื่อเข้าใช้งาน" : "ลงทะเบียนบัญชีบุคลากรแพทย์"}
+              {authMode === "login" ? "ลงชื่อเข้าใช้งาน" : "ลงทะเบียน"}
             </h2>
 
             {authMode === "login" ? (
@@ -447,7 +447,7 @@ export default function App() {
                   เข้าสู่ระบบ
                 </button>
                 <p className="text-center text-xs text-slate-500 mt-4 leading-relaxed font-normal">
-                  ยังไม่เป็นพนักงานในระบบเบิก?{" "}
+                  ไม่มีรหัสเบิกพัสดุ{" "}
                   <button
                     type="button"
                     onClick={() => {
@@ -464,7 +464,7 @@ export default function App() {
               <form onSubmit={handleRegisterSubmit} className="space-y-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-505 uppercase tracking-wider mb-1">
-                    ตั้งยูสเซอร์ที่ประสงค์ (Username)
+                    ชื่อผู้ใช้ (Username)
                   </label>
                   <input
                     type="text"
@@ -477,7 +477,7 @@ export default function App() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-505 uppercase tracking-wider mb-1">
-                    รหัสผ่านรักษาความปลอดภัย (Password)
+                    รหัสผ่าน (Password)
                   </label>
                   <input
                     type="password"
@@ -552,101 +552,122 @@ export default function App() {
           <div className="text-center shrink-0 mb-4">
             <button
               onClick={() => {
-                const currentApi = localStorage.getItem("backend_api_url") || "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
                 Swal.fire({
-                  title: "⚙️ ตั้งค่า API เซิร์ฟเวอร์",
-                  html: `
-                    <div style="text-align: left; font-family: sans-serif; font-size: 13px; color: #334155; line-height: 1.5;">
-                      <p style="margin-bottom: 12px; font-weight: 500; color: #64748b;">เนื่องจากระบบถูกรันอยู่บน GitHub Pages (Client) จะต้องเลือก URL ของเซิร์ฟเวอร์ (API) เพื่อส่งคำสั่งไปประมวลผลหลังบ้าน</p>
-                      
-                      <div style="margin-bottom: 12px;">
-                        <button id="swal-btn-dev" type="button" style="width: 100%; text-align: left; font-family: monospace; font-size: 11px; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; transition: all 0.2s;">
-                          <strong style="color: #10b981; font-size: 12px;">🟢 1. เซิร์ฟเวอร์ Development (แนะนำขณะทดสอบ)</strong><br/>
-                          https://ais-dev-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app
-                        </button>
-                      </div>
-
-                      <div style="margin-bottom: 16px;">
-                        <button id="swal-btn-pre" type="button" style="width: 100%; text-align: left; font-family: monospace; font-size: 11px; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; transition: all 0.2s;">
-                          <strong style="color: #3b82f6; font-size: 12px;">🔵 2. เซิร์ฟเวอร์ Production / Shared (เมื่อแชร์ลิงก์จริง)</strong><br/>
-                          https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app
-                        </button>
-                      </div>
-
-                      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
-                      
-                      <div style="margin-bottom: 8px;">
-                        <label style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 4px;">หรือกำหนดลิงก์เซิร์ฟเวอร์แบบกำหนดเอง (Custom URL):</label>
-                        <input id="swal-input-url" type="text" value="${currentApi}" placeholder="https://" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 12px;" />
-                      </div>
-                    </div>
-                  `,
+                  title: "กรุณากรอกรหัสผ่านเพื่อเข้าสู่การตั้งค่า API",
+                  input: "password",
+                  inputAttributes: {
+                    autocapitalize: "off",
+                    autocorrect: "off"
+                  },
                   showCancelButton: true,
-                  confirmButtonText: "บันทึกตั้งค่า",
+                  confirmButtonText: "ยืนยัน",
                   cancelButtonText: "ยกเลิก",
-                  didOpen: () => {
-                    const devBtn = document.getElementById("swal-btn-dev");
-                    const preBtn = document.getElementById("swal-btn-pre");
-                    const inputEl = document.getElementById("swal-input-url") as HTMLInputElement;
-
-                    // Mark selected border
-                    const updateBorders = (selected: "dev" | "pre" | "custom") => {
-                      if (devBtn) devBtn.style.borderColor = selected === "dev" ? "#10b981" : "#cbd5e1";
-                      if (preBtn) preBtn.style.borderColor = selected === "pre" ? "#3b82f6" : "#cbd5e1";
-                    };
-
-                    const devUrl = "https://ais-dev-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
-                    const preUrl = "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
-
-                    if (inputEl.value === devUrl) updateBorders("dev");
-                    else if (inputEl.value === preUrl) updateBorders("pre");
-                    else updateBorders("custom");
-
-                    if (devBtn && inputEl) {
-                      devBtn.onclick = () => {
-                        inputEl.value = devUrl;
-                        updateBorders("dev");
-                      };
+                  preConfirm: (pass) => {
+                    if (pass !== "SAWARIN") {
+                      Swal.showValidationMessage("รหัสผ่านไม่ถูกต้อง");
+                      return false;
                     }
-                    if (preBtn && inputEl) {
-                      preBtn.onclick = () => {
-                        inputEl.value = preUrl;
-                        updateBorders("pre");
-                      };
-                    }
-                    if (inputEl) {
-                      inputEl.oninput = () => {
+                    return true;
+                  }
+                }).then((res) => {
+                  if (res.isConfirmed) {
+                    const currentApi = localStorage.getItem("backend_api_url") || "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
+                    Swal.fire({
+                      title: "⚙️ ตั้งค่า API เซิร์ฟเวอร์",
+                      html: `
+                        <div style="text-align: left; font-family: sans-serif; font-size: 13px; color: #334155; line-height: 1.5;">
+                          <p style="margin-bottom: 12px; font-weight: 500; color: #64748b;">เนื่องจากระบบถูกรันอยู่บน GitHub Pages (Client) จะต้องเลือก URL ของเซิร์ฟเวอร์ (API) เพื่อส่งคำสั่งไปประมวลผลหลังบ้าน</p>
+                          
+                          <div style="margin-bottom: 12px;">
+                            <button id="swal-btn-dev" type="button" style="width: 100%; text-align: left; font-family: monospace; font-size: 11px; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; transition: all 0.2s;">
+                              <strong style="color: #10b981; font-size: 12px;">🟢 1. เซิร์ฟเวอร์ Development (แนะนำขณะทดสอบ)</strong><br/>
+                              https://ais-dev-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app
+                            </button>
+                          </div>
+
+                          <div style="margin-bottom: 16px;">
+                            <button id="swal-btn-pre" type="button" style="width: 100%; text-align: left; font-family: monospace; font-size: 11px; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; transition: all 0.2s;">
+                              <strong style="color: #3b82f6; font-size: 12px;">🔵 2. เซิร์ฟเวอร์ Production / Shared (เมื่อแชร์ลิงก์จริง)</strong><br/>
+                              https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app
+                            </button>
+                          </div>
+
+                          <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
+                          
+                          <div style="margin-bottom: 8px;">
+                            <label style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 4px;">หรือกำหนดลิงก์เซิร์ฟเวอร์แบบกำหนดเอง (Custom URL):</label>
+                            <input id="swal-input-url" type="text" value="${currentApi}" placeholder="https://" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 12px;" />
+                          </div>
+                        </div>
+                      `,
+                      showCancelButton: true,
+                      confirmButtonText: "บันทึกตั้งค่า",
+                      cancelButtonText: "ยกเลิก",
+                      didOpen: () => {
+                        const devBtn = document.getElementById("swal-btn-dev");
+                        const preBtn = document.getElementById("swal-btn-pre");
+                        const inputEl = document.getElementById("swal-input-url") as HTMLInputElement;
+
+                        // Mark selected border
+                        const updateBorders = (selected: "dev" | "pre" | "custom") => {
+                          if (devBtn) devBtn.style.borderColor = selected === "dev" ? "#10b981" : "#cbd5e1";
+                          if (preBtn) preBtn.style.borderColor = selected === "pre" ? "#3b82f6" : "#cbd5e1";
+                        };
+
+                        const devUrl = "https://ais-dev-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
+                        const preUrl = "https://ais-pre-oz7nezk4tpzgmervnkkonx-966862217040.asia-southeast1.run.app";
+
                         if (inputEl.value === devUrl) updateBorders("dev");
                         else if (inputEl.value === preUrl) updateBorders("pre");
                         else updateBorders("custom");
-                      };
-                    }
-                  },
-                  preConfirm: () => {
-                    const urlInput = (document.getElementById("swal-input-url") as HTMLInputElement).value.trim();
-                    if (!urlInput) {
-                      Swal.showValidationMessage("กรุณากรอกหรือเลือก URL เซิร์ฟเวอร์");
-                      return false;
-                    }
-                    if (!urlInput.startsWith("http://") && !urlInput.startsWith("https://")) {
-                      Swal.showValidationMessage("URL ต้องขึ้นต้นด้วย http:// หรือ https://");
-                      return false;
-                    }
-                    return urlInput;
-                  }
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    const newUrl = result.value;
-                    const cleanUrl = newUrl.endsWith("/") ? newUrl.slice(0, -1) : newUrl;
-                    localStorage.setItem("backend_api_url", cleanUrl);
-                    Swal.fire({
-                      icon: "success",
-                      title: "บันทึกตั้งค่าแล้ว",
-                      text: `เปลี่ยนจุดเชื่อมต่อ API ไปที่ ${cleanUrl} แล้วระบบจะทำการโหลดข้อมูลใหม่`,
-                      timer: 1500,
-                      showConfirmButton: false
-                    }).then(() => {
-                      window.location.reload();
+
+                        if (devBtn && inputEl) {
+                          devBtn.onclick = () => {
+                            inputEl.value = devUrl;
+                            updateBorders("dev");
+                          };
+                        }
+                        if (preBtn && inputEl) {
+                          preBtn.onclick = () => {
+                            inputEl.value = preUrl;
+                            updateBorders("pre");
+                          };
+                        }
+                        if (inputEl) {
+                          inputEl.oninput = () => {
+                            if (inputEl.value === devUrl) updateBorders("dev");
+                            else if (inputEl.value === preUrl) updateBorders("pre");
+                            else updateBorders("custom");
+                          };
+                        }
+                      },
+                      preConfirm: () => {
+                        const urlInput = (document.getElementById("swal-input-url") as HTMLInputElement).value.trim();
+                        if (!urlInput) {
+                          Swal.showValidationMessage("กรุณากรอกหรือเลือก URL เซิร์ฟเวอร์");
+                          return false;
+                        }
+                        if (!urlInput.startsWith("http://") && !urlInput.startsWith("https://")) {
+                          Swal.showValidationMessage("URL ต้องขึ้นต้นด้วย http:// หรือ https://");
+                          return false;
+                        }
+                        return urlInput;
+                      }
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        const newUrl = result.value;
+                        const cleanUrl = newUrl.endsWith("/") ? newUrl.slice(0, -1) : newUrl;
+                        localStorage.setItem("backend_api_url", cleanUrl);
+                        Swal.fire({
+                          icon: "success",
+                          title: "บันทึกตั้งค่าแล้ว",
+                          text: `เปลี่ยนจุดเชื่อมต่อ API ไปที่ ${cleanUrl} แล้วระบบจะทำการโหลดข้อมูลใหม่`,
+                          timer: 1500,
+                          showConfirmButton: false
+                        }).then(() => {
+                          window.location.reload();
+                        });
+                      }
                     });
                   }
                 });
@@ -661,7 +682,7 @@ export default function App() {
           {/* Footer inside Left Form */}
           <div className="text-center text-[10px] text-slate-400 font-medium shrink-0 pt-4 leading-relaxed">
             © 2025 THAMC e-Material System <br />
-            Hospital Administration Material Services
+            Finance and Accounting Division
           </div>
         </div>
 
@@ -680,10 +701,10 @@ export default function App() {
               INVENTORY MANAGEMENT PORTAL
             </div>
             <h2 className="text-4xl xl:text-6xl font-black mb-4 leading-snug drop-shadow-md">
-              ศูนย์ระบบเบิกจ่ายและพัสดุแพทย์
+              ระบบเบิกจ่ายพัสดุศูนย์การแพทย์
             </h2>
             <p className="text-indigo-200 text-base xl:text-xl max-w-2xl font-light leading-relaxed drop-shadow">
-              เพิ่มประสิทธิภาพใบเบิกพัสดุ สนับสนุนกระบวนการยา ปราศรหัสความคลาดเคลื่อน รวดเร็ว แม่นยำ และบูรณาการเพื่อความปลอดภัยในการดูแลรักษาสากล
+              แผนกจัดซื้อและคลังพัสดุ ฝ่ายการเงินและบัญชี
             </p>
           </div>
         </div>
